@@ -1,0 +1,19 @@
+[package]
+name = "bitset-core"
+version = "0.1.0"
+edition = "2018"
+license = "MIT"
+
+authors = ["Casper <CasualX@users.noreply.github.com>"]
+description = "Straightforward, no-std compatible, simd optimized, BitSet API"
+documentation = "https://docs.rs/bitset-core"
+repository = "https://github.com/CasualX/bitset-core"
+readme = "readme.md"
+keywords = ["bitset", "bitarray", "bitslice", "bitmap", "bitmask"]
+categories = ["data-structures", "no-std"]
+
+[features]
+default = ["std"]
+
+# Provide implementations for Vec and Box
+std = []

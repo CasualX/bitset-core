@@ -58,9 +58,14 @@ a.bit_not();
 assert_eq!(a, [[0xffffffffu32; 4]; 16]);
 ```
 
+Future work includes making everything const fn to enable all of this at compiletime, blocked on support for traits in const fn.
+
 For non fixed-size containers using the `std` feature `BitSet` is also implemented for `Vec<T>` and `Box<[T]>` (where `[T]`: `BitSet`).
 
-Future work includes making everything const fn to enable all of this at compiletime, blocked on support for traits in const fn.
+Sparse bitsets are supported with `BitSet` implementations for `HashMap<usize, T>` and `BTreeMap<usize, T>` (where `[T]`: `BitSet`).
+
+```rust
+```
 
 License
 -------

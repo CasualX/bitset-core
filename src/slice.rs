@@ -46,44 +46,52 @@ macro_rules! impl_bit_set_slice {
 
 			#[inline]
 			fn bit_all(&self) -> bool {
-				let mut result = !0;
 				for i in 0..self.len() {
-					result &= self[i];
+					if self[i] != !0 {
+						return false;
+					}
 				}
-				result == !0
+				true
 			}
 			#[inline]
 			fn bit_any(&self) -> bool {
-				let mut result = 0;
 				for i in 0..self.len() {
-					result |= self[i];
+					if self[i] != 0 {
+						return true;
+					}
 				}
-				result != 0
+				false
 			}
 
 			#[inline]
 			fn bit_eq(&self, rhs: &Self) -> bool {
-				let mut result = true;
+				assert_eq!(self.len(), rhs.len());
 				for i in 0..self.len() {
-					result &= self[i] == rhs[i];
+					if self[i] != rhs[i] {
+						return false;
+					}
 				}
-				result
+				true
 			}
 			#[inline]
 			fn bit_disjoint(&self, rhs: &Self) -> bool {
-				let mut result = true;
+				assert_eq!(self.len(), rhs.len());
 				for i in 0..self.len() {
-					result &= self[i] & rhs[i] == 0;
+					if self[i] & rhs[i] != 0 {
+						return false;
+					}
 				}
-				result
+				true
 			}
 			#[inline]
 			fn bit_subset(&self, rhs: &Self) -> bool {
-				let mut result = true;
+				assert_eq!(self.len(), rhs.len());
 				for i in 0..self.len() {
-					result &= self[i] | rhs[i] == rhs[i];
+					if self[i] | rhs[i] != rhs[i] {
+						return false;
+					}
 				}
-				result
+				true
 			}
 
 			#[inline]

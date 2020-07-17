@@ -58,43 +58,53 @@ macro_rules! impl_bit_set_simd {
 			}
 			#[inline]
 			fn bit_all(&self) -> bool {
-				let mut result = [!0; $elem_len];
 				for i in 0..self.len() {
-					$(result[$idx] &= self[i][$idx];)*
+					if self[i] != [!0; $elem_len] {
+						return false;
+					}
 				}
-				result == [!0; $elem_len]
+				true
 			}
 			#[inline]
 			fn bit_any(&self) -> bool {
-				let mut result = [0; $elem_len];
 				for i in 0..self.len() {
-					$(result[$idx] |= self[i][$idx];)*
+					if self[i] != [0; $elem_len] {
+						return true;
+					}
 				}
-				result != [0; $elem_len]
+				false
 			}
 			#[inline]
 			fn bit_eq(&self, rhs: &Self) -> bool {
-				let mut result = true;
+				assert_eq!(self.len(), rhs.len());
 				for i in 0..self.len() {
-					result &= self[i] == rhs[i];
+					if self[i] != rhs[i] {
+						return false;
+					}
 				}
-				result
+				true
 			}
 			#[inline]
 			fn bit_disjoint(&self, rhs: &Self) -> bool {
-				let mut result = true;
+				assert_eq!(self.len(), rhs.len());
 				for i in 0..self.len() {
-					result &= [$(self[i][$idx] & rhs[i][$idx]),*] == [0; $elem_len];
+					let tmp = [$(self[i][$idx] & rhs[i][$idx]),*];
+					if tmp != [0; $elem_len] {
+						return false;
+					}
 				}
-				result
+				true
 			}
 			#[inline]
 			fn bit_subset(&self, rhs: &Self) -> bool {
-				let mut result = true;
+				assert_eq!(self.len(), rhs.len());
 				for i in 0..self.len() {
-					result &= [$(self[i][$idx] & rhs[i][$idx]),*] == rhs[i];
+					let tmp = [$(self[i][$idx] | rhs[i][$idx]),*];
+					if tmp != rhs[i] {
+						return false;
+					}
 				}
-				result
+				true
 			}
 			#[inline]
 			fn bit_or(&mut self, rhs: &Self) -> &mut Self {
@@ -147,11 +157,11 @@ macro_rules! impl_bit_set_simd {
 			}
 			#[inline]
 			fn bit_count(&self) -> usize {
-				let mut result = 0;
+				let mut result = [0; $elem_len];
 				for i in 0..self.len() {
-					$(result += self[i][$idx].count_ones() as usize;)*
+					$(result[$idx] += self[i][$idx].count_ones() as usize;)*
 				}
-				result
+				0 $(+result[$idx])*
 			}
 		}
 	};

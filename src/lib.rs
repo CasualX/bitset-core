@@ -80,6 +80,9 @@ for inclusion in the work by you, shall be licensed as above, without any additi
 #[macro_use]
 extern crate std;
 
+mod index;
+pub use self::index::BitIndex;
+
 /// The BitSet API.
 pub trait BitSet {
 	/// Returns total number of bits.
@@ -94,15 +97,41 @@ pub trait BitSet {
 	}
 
 	/// Returns if the given bit is set.
-	fn bit_test(&self, bit: usize) -> bool;
+	#[inline]
+	fn bit_test<I: BitIndex>(&self, bit: I) -> bool {
+		self.bit_test_usize(bit.into_index())
+	}
 	/// Sets the given bit.
-	fn bit_set(&mut self, bit: usize) -> &mut Self;
+	#[inline]
+	fn bit_set<I: BitIndex>(&mut self, bit: I) -> &mut Self {
+		self.bit_set_usize(bit.into_index())
+	}
 	/// Resets the given bit.
-	fn bit_reset(&mut self, bit: usize) -> &mut Self;
+	#[inline]
+	fn bit_reset<I: BitIndex>(&mut self, bit: I) -> &mut Self {
+		self.bit_reset_usize(bit.into_index())
+	}
 	/// Flips the given bit.
-	fn bit_flip(&mut self, bit: usize) -> &mut Self;
+	#[inline]
+	fn bit_flip<I: BitIndex>(&mut self, bit: I) -> &mut Self {
+		self.bit_flip_usize(bit.into_index())
+	}
 	/// Conditionally sets or resets the given bit.
-	fn bit_cond(&mut self, bit: usize, value: bool) -> &mut Self;
+	#[inline]
+	fn bit_cond<I: BitIndex>(&mut self, bit: I, value: bool) -> &mut Self {
+		self.bit_cond_usize(bit.into_index(), value)
+	}
+
+	/// Returns if the given bit is set.
+	fn bit_test_usize(&self, bit: usize) -> bool;
+	/// Sets the given bit.
+	fn bit_set_usize(&mut self, bit: usize) -> &mut Self;
+	/// Resets the given bit.
+	fn bit_reset_usize(&mut self, bit: usize) -> &mut Self;
+	/// Flips the given bit.
+	fn bit_flip_usize(&mut self, bit: usize) -> &mut Self;
+	/// Conditionally sets or resets the given bit.
+	fn bit_cond_usize(&mut self, bit: usize, value: bool) -> &mut Self;
 
 	/// Returns if all bits are set.
 	fn bit_all(&self) -> bool;
@@ -209,32 +238,32 @@ macro_rules! impl_bitset {
 		}
 
 		#[inline]
-		fn bit_test(&self, bit: usize) -> bool {
+		fn bit_test_usize(&self, bit: usize) -> bool {
 			use ::core::ops;
-			<<Self as ops::Deref>::Target as $crate::BitSet>::bit_test(<Self as ops::Deref>::deref(self), bit)
+			<<Self as ops::Deref>::Target as $crate::BitSet>::bit_test_usize(<Self as ops::Deref>::deref(self), bit)
 		}
 		#[inline]
-		fn bit_set(&mut self, bit: usize) -> &mut Self {
+		fn bit_set_usize(&mut self, bit: usize) -> &mut Self {
 			use ::core::ops;
-			<<Self as ops::Deref>::Target as $crate::BitSet>::bit_set(<Self as ops::DerefMut>::deref_mut(self), bit);
+			<<Self as ops::Deref>::Target as $crate::BitSet>::bit_set_usize(<Self as ops::DerefMut>::deref_mut(self), bit);
 			self
 		}
 		#[inline]
-		fn bit_reset(&mut self, bit: usize) -> &mut Self {
+		fn bit_reset_usize(&mut self, bit: usize) -> &mut Self {
 			use ::core::ops;
-			<<Self as ops::Deref>::Target as $crate::BitSet>::bit_reset(<Self as ops::DerefMut>::deref_mut(self), bit);
+			<<Self as ops::Deref>::Target as $crate::BitSet>::bit_reset_usize(<Self as ops::DerefMut>::deref_mut(self), bit);
 			self
 		}
 		#[inline]
-		fn bit_flip(&mut self, bit: usize) -> &mut Self {
+		fn bit_flip_usize(&mut self, bit: usize) -> &mut Self {
 			use ::core::ops;
-			<<Self as ops::Deref>::Target as $crate::BitSet>::bit_flip(<Self as ops::DerefMut>::deref_mut(self), bit);
+			<<Self as ops::Deref>::Target as $crate::BitSet>::bit_flip_usize(<Self as ops::DerefMut>::deref_mut(self), bit);
 			self
 		}
 		#[inline]
-		fn bit_cond(&mut self, bit: usize, value: bool) -> &mut Self {
+		fn bit_cond_usize(&mut self, bit: usize, value: bool) -> &mut Self {
 			use ::core::ops;
-			<<Self as ops::Deref>::Target as $crate::BitSet>::bit_cond(<Self as ops::DerefMut>::deref_mut(self), bit, value);
+			<<Self as ops::Deref>::Target as $crate::BitSet>::bit_cond_usize(<Self as ops::DerefMut>::deref_mut(self), bit, value);
 			self
 		}
 

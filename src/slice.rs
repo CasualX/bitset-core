@@ -18,26 +18,26 @@ macro_rules! impl_bit_set_slice {
 			}
 
 			#[inline]
-			fn bit_test(&self, bit: usize) -> bool {
+			fn bit_test_usize(&self, bit: usize) -> bool {
 				self[bit / $bits_per_word] & (1 << bit % $bits_per_word) != 0
 			}
 			#[inline]
-			fn bit_set(&mut self, bit: usize) -> &mut Self {
+			fn bit_set_usize(&mut self, bit: usize) -> &mut Self {
 				self[bit / $bits_per_word] |= 1 << bit % $bits_per_word;
 				self
 			}
 			#[inline]
-			fn bit_reset(&mut self, bit: usize) -> &mut Self {
+			fn bit_reset_usize(&mut self, bit: usize) -> &mut Self {
 				self[bit / $bits_per_word] &= !(1 << bit % $bits_per_word);
 				self
 			}
 			#[inline]
-			fn bit_flip(&mut self, bit: usize) -> &mut Self {
+			fn bit_flip_usize(&mut self, bit: usize) -> &mut Self {
 				self[bit / $bits_per_word] ^= 1 << bit % $bits_per_word;
 				self
 			}
 			#[inline]
-			fn bit_cond(&mut self, bit: usize, value: bool) -> &mut Self {
+			fn bit_cond_usize(&mut self, bit: usize, value: bool) -> &mut Self {
 				let index = bit / $bits_per_word;
 				let mask = 1 << bit % $bits_per_word;
 				self[index] = (self[index] & !mask) | (<$elem_ty>::wrapping_add(!(value as $elem_ty), 1) & mask);

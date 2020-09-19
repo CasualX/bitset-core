@@ -2,7 +2,7 @@ use super::BitSet;
 
 macro_rules! impl_bit_set_slice {
 	([$elem_ty:ty], $bits_per_word:literal) => {
-		impl BitSet for [$elem_ty] {
+		impl const BitSet for [$elem_ty] {
 			#[inline]
 			fn bit_len(&self) -> usize {
 				self.len() * $bits_per_word
@@ -11,8 +11,10 @@ macro_rules! impl_bit_set_slice {
 			#[inline]
 			fn bit_init(&mut self, value: bool) -> &mut Self {
 				let value = <$elem_ty>::wrapping_add(!(value as $elem_ty), 1);
-				for i in 0..self.len() {
+				let mut i = 0;
+				while i < self.len() {
 					self[i] = value;
+					i += 1;
 				}
 				self
 			}
@@ -46,100 +48,122 @@ macro_rules! impl_bit_set_slice {
 
 			#[inline]
 			fn bit_all(&self) -> bool {
-				for i in 0..self.len() {
+				let mut i = 0;
+				while i < self.len() {
 					if self[i] != !0 {
 						return false;
 					}
+					i += 1;
 				}
 				true
 			}
 			#[inline]
 			fn bit_any(&self) -> bool {
-				for i in 0..self.len() {
+				let mut i = 0;
+				while i < self.len() {
 					if self[i] != 0 {
 						return true;
 					}
+					i += 1;
 				}
 				false
 			}
 
 			#[inline]
 			fn bit_eq(&self, rhs: &Self) -> bool {
-				assert_eq!(self.len(), rhs.len());
-				for i in 0..self.len() {
+				assert!(self.len() == rhs.len());
+				let mut i = 0;
+				while i < self.len() {
 					if self[i] != rhs[i] {
 						return false;
 					}
+					i += 1;
 				}
 				true
 			}
 			#[inline]
 			fn bit_disjoint(&self, rhs: &Self) -> bool {
-				assert_eq!(self.len(), rhs.len());
-				for i in 0..self.len() {
+				assert!(self.len() == rhs.len());
+				let mut i = 0;
+				while i < self.len() {
 					if self[i] & rhs[i] != 0 {
 						return false;
 					}
+					i += 1;
 				}
 				true
 			}
 			#[inline]
 			fn bit_subset(&self, rhs: &Self) -> bool {
-				assert_eq!(self.len(), rhs.len());
-				for i in 0..self.len() {
+				assert!(self.len() == rhs.len());
+				let mut i = 0;
+				while i < self.len() {
 					if self[i] | rhs[i] != rhs[i] {
 						return false;
 					}
+					i += 1;
 				}
 				true
 			}
 
 			#[inline]
 			fn bit_or(&mut self, rhs: &Self) -> &mut Self {
-				assert_eq!(self.len(), rhs.len());
-				for i in 0..self.len() {
+				assert!(self.len() == rhs.len());
+				let mut i = 0;
+				while i < self.len() {
 					self[i] |= rhs[i];
+					i += 1;
 				}
 				self
 			}
 			#[inline]
 			fn bit_and(&mut self, rhs: &Self) -> &mut Self {
-				assert_eq!(self.len(), rhs.len());
-				for i in 0..self.len() {
+				assert!(self.len() == rhs.len());
+				let mut i = 0;
+				while i < self.len() {
 					self[i] &= rhs[i];
+					i += 1;
 				}
 				self
 			}
 			#[inline]
 			fn bit_andnot(&mut self, rhs: &Self) -> &mut Self {
-				assert_eq!(self.len(), rhs.len());
-				for i in 0..self.len() {
+				assert!(self.len() == rhs.len());
+				let mut i = 0;
+				while i < self.len() {
 					self[i] &= !rhs[i];
+					i += 1;
 				}
 				self
 			}
 			#[inline]
 			fn bit_xor(&mut self, rhs: &Self) -> &mut Self {
-				assert_eq!(self.len(), rhs.len());
-				for i in 0..self.len() {
+				assert!(self.len() == rhs.len());
+				let mut i = 0;
+				while i < self.len() {
 					self[i] ^= rhs[i];
+					i += 1;
 				}
 				self
 			}
 			#[inline]
 			fn bit_not(&mut self) -> &mut Self {
-				for i in 0..self.len() {
+				let mut i = 0;
+				while i < self.len() {
 					self[i] = !self[i];
+					i += 1;
 				}
 				self
 			}
 			#[inline]
 			fn bit_mask(&mut self, rhs: &Self, mask: &Self) -> &mut Self {
 				let len = self.len();
-				assert_eq!(len, rhs.len());
-				assert_eq!(len, mask.len());
-				for i in 0..len {
+				assert!(len == rhs.len());
+				assert!(len == mask.len());
+				let mut i = 0;
+				while i < self.len() {
 					self[i] = self[i] & !mask[i] | rhs[i] & mask[i];
+					i += 1;
 				}
 				self
 			}
@@ -147,8 +171,10 @@ macro_rules! impl_bit_set_slice {
 			#[inline]
 			fn bit_count(&self) -> usize {
 				let mut result = 0;
-				for i in 0..self.len() {
+				let mut i = 0;
+				while i < self.len() {
 					result += self[i].count_ones() as usize;
+					i += 1;
 				}
 				result
 			}

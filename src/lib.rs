@@ -74,6 +74,8 @@ Unless you explicitly state otherwise, any contribution intentionally submitted
 for inclusion in the work by you, shall be licensed as above, without any additional terms or conditions.
 */
 
+#![allow(incomplete_features)]
+#![feature(const_trait_impl, const_fn, const_mut_refs, const_panic)]
 #![no_std]
 
 #[cfg(any(test, feature = "std"))]

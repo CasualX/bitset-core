@@ -2,7 +2,7 @@ use super::BitSet;
 
 macro_rules! impl_bit_set_uint {
 	($ty:ty, $bits_per_word:literal) => {
-		impl BitSet for $ty {
+		impl const BitSet for $ty {
 			#[inline]
 			fn bit_len(&self) -> usize {
 				$bits_per_word
